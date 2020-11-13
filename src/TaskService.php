@@ -103,6 +103,11 @@ class TaskService
                         return;
                     }
                     
+                    // 没有数据不投递
+                    if (!$result->getTaskData()) {
+                        return;
+                    }
+                    
                     if ($result->isTaskIsDefault()) {
                         $this->task($class, $result);
                     } elseif ($result->isTaskIsWait()) {
@@ -176,16 +181,12 @@ class TaskService
     {
         $data     = $taskTimerResult->getTaskData();
         $dataSize = count($data);
-        if ($dataSize < 1) {
-            throw new TaskException('投递的数据为0');
+        if (Arr::isAssoc($data)) {
+            throw new TaskException('投递的数据必须为数字索引数组');
         }
         
         if ($dataSize > 1000) {
             throw new TaskException('投递的数据长度不能超过1000');
-        }
-        
-        if (Arr::isAssoc($data)) {
-            throw new TaskException('投递的数据必须为数字索引数组');
         }
         
         $tasks = [];
@@ -196,7 +197,7 @@ class TaskService
             ];
         }
         
-        $result = $this->server->taskCo($tasks, 0.5);
+        $result = $this->server->taskCo($tasks, $taskTimerResult->getTaskTimeout());
         $result = is_array($result) ? $result : [];
         
         // 执行回调
