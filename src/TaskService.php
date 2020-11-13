@@ -37,19 +37,16 @@ class TaskService
     protected $app;
     
     
-    public function __construct(Manager $manager, App $app)
-    {
-        $this->manager = $manager;
-        $this->server  = $this->manager->getServer();
-        $this->app     = $app;
-    }
-    
-    
     /**
      * 执行处理
+     * @param App $app
      */
-    public function handle()
+    public function handle(App $app)
     {
+        $this->manager = $app->make(Manager::class);
+        $this->server  = $this->manager->getServer();
+        $this->app     = $app;
+        
         if ($this->server->taskworker) {
             return;
         }
