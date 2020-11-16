@@ -24,7 +24,10 @@
 	},
 	"extra"       : {
 		"busyphp" : {
-			"config" : {
+			"services" : [
+				"BusyPHP\\task\\Service"
+			],
+			"config"   : {
 				"task" : "src/config.php"
 			}
 		}
