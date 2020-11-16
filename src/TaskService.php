@@ -93,7 +93,8 @@ class TaskService
                 }
                 
                 // Worker 进程忙碌中
-                if ($this->server->getWorkerStatus() === 1) {
+                // Swoole 版本 >= v4.5.0RC1 可用
+                if (method_exists($this->server, 'getWorkerStatus') && $this->server->getWorkerStatus() === 1) {
                     return;
                 }
                 
